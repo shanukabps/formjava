@@ -1,0 +1,482 @@
+
+//db
+public class db {
+public static Connection con()  //xammp
+{
+    
+    Connection abc=null;
+    
+    try {
+        abc=DriverManager.getConnection("jdbc:mysql://localhost:3306/form","root","");
+    } catch (SQLException ex) {
+        Logger.getLogger(db.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    return  abc;
+    
+}
+}
+
+
+//submit
+
+   PreparedStatement ps = null;
+        int c = 0;
+
+
+        String uid = id.getText();
+
+        if (uid.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            id.setText("");
+        } else {
+            c++;
+        }
+
+
+
+
+        String uname = name.getText();
+
+        if (uname.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            name.setText("");
+        } else {
+            c++;
+        }
+
+        String uage = age.getText();
+        if (uage.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            age.setText("");
+        } else {
+            c++;
+        }
+        String ubday = bday.getText();
+        if (uage.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            bday.setText("");
+        } else {
+            c++;
+        }
+
+        String ugender = null;
+
+        if (jRadioButton1.isSelected()) {
+            ugender = "Trail";
+            c++;
+        } else if (jRadioButton2.isSelected()) {
+            ugender = "Call";
+            c++;
+        } else {
+            JOptionPane.showMessageDialog(this, "Select the gender");
+        }
+
+        if (c >= 4) {
+            String sg = "insert into user values(?,?,?,?,?,?)";
+    
+            try {
+                ps = db.con().prepareStatement(sg);
+                ps.setString(1, uname);
+                ps.setString(2, uage);
+                ps.setString(3, ubday);
+                ps.setString(4, (String) utype.getSelectedItem());
+                ps.setString(5, ugender);
+                ps.setString(6, uid);
+                   
+
+                ps.execute();
+                JOptionPane.showMessageDialog(this, " Saved !");
+                
+            } catch (SQLException ex) {
+
+                JOptionPane.showMessageDialog(this, "Clientid does not exists\nOR\nCaseID  already exists !");
+            }
+
+        }
+
+
+
+//update
+
+     PreparedStatement ps = null;
+        int c = 0;
+
+
+        String uid = id.getText();
+
+        if (uid.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            id.setText("");
+        } else {
+            c++;
+        }
+
+
+
+
+        String uname = name.getText();
+
+        if (uname.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            name.setText("");
+        } else {
+            c++;
+        }
+
+        String uage = age.getText();
+        if (uage.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            age.setText("");
+        } else {
+            c++;
+        }
+        String ubday = bday.getText();
+        if (uage.equals("")) {
+            JOptionPane.showMessageDialog(this, "Enter Client ID");
+            bday.setText("");
+        } else {
+            c++;
+        }
+
+        String ugender = null;
+
+        if (jRadioButton1.isSelected()) {
+            ugender = "Trail";
+            c++;
+        } else if (jRadioButton2.isSelected()) {
+            ugender = "Call";
+            c++;
+        } else {
+            JOptionPane.showMessageDialog(this, "Select the gender");
+        }
+
+        if (c >= 4) {
+            String sg = "UPDATE user set Name=?,age=? where id='" +uid+"'";
+    
+            try {
+                ps = db.con().prepareStatement(sg);
+                ps.setString(1, uname);
+                ps.setString(2, uage);
+         
+                   
+
+                ps.execute();
+                JOptionPane.showMessageDialog(this, " Saved !");
+                
+            } catch (SQLException ex) {
+
+                JOptionPane.showMessageDialog(this, "Clientid does not exists\nOR\nCaseID  already exists !");
+            }
+
+        }
+
+//search
+
+         PreparedStatement pst = null;
+      
+        String uid =id.getText();
+       
+        ResultSet rst = null;
+        
+         String sc = "SELECT * FROM user WHERE id LIKE ?";
+           try {
+            pst = db.con().prepareStatement(sc);
+            pst.setString(1, uid);
+            rst = pst.executeQuery();
+            rst.next();
+              name.setText(rst.getString("Name")) ;
+         
+           }
+           
+           catch(Exception e){
+           
+             JOptionPane.showMessageDialog(this, "Not Found!\nplease check the Client ID");
+           
+           }
+
+
+
+//table
+
+        DefaultTableModel tb = (DefaultTableModel) table1.getModel();
+        tb.setRowCount(0);
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        sc = clientid.getText();
+
+        String query = "SELECT * FROM AddCase WHERE ClientID LIKE ?";
+
+        try {
+            pst = db.con().prepareStatement(query);
+            pst.setString(1, sc);
+            rst = pst.executeQuery();
+
+            while (rst.next()) {
+
+                Vector v = new Vector();
+                v.add(rst.getString("CaseID"));
+                v.add(rst.getString("CaseNo"));
+                v.add(rst.getString("Casedes"));
+                v.add(rst.getString("CourtNo"));
+                v.add(rst.getString("CaseDate"));
+
+                tb.addRow(v);
+               
+            }
+             if(tb.getRowCount()==0){
+                   JOptionPane.showMessageDialog(this, "Not Found!\nplease check the Client ID");
+               }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+}
+
+
+
+
+//email
+
+
+
+        public void sendMail2(String recepient) throws Exception {
+
+        Properties properties = new Properties();
+
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        final String myAccount = "bps95shanuka@gmail.com";
+        final String password = "shanuka1995";
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(myAccount, password);
+            }
+
+        });
+
+        Message message = prepareMessage2(session, myAccount, recepient,"dddd");
+        try {
+            Transport.send(message);
+            System.out.println("E-mail sent ");
+            JOptionPane.showMessageDialog(this, "Email Sent");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error in connecting to server....\nPlease Check your internet connection");
+        }
+    }
+
+    private Message prepareMessage2(Session session, String myAccount, String recepient, String wh) {
+
+        Message message = new MimeMessage(session);
+        try {
+            message.setFrom(new InternetAddress(myAccount));
+
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recepient));
+            message.setSubject("A New Case");
+
+            message.setText(wh);
+            return message;
+        } catch (Exception ex) {
+            Logger.getLogger(email.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+//email send button
+  try {
+                sendMail2("bpsshanuka@gmail.com");
+            } catch (Exception ex) {
+                Logger.getLogger(email.class.getName()).log(Level.SEVERE, null, ex);
+            }
+      
+
+
+//php server
+
+<?php
+
+session_start();
+
+//initialize
+//$username="";
+//$password="";
+
+
+//connectdb
+$connection=mysqli_connect('localhost','root','','pdatabase');
+
+if(mysqli_connect_errno()){
+	die('Database connection failed'.mysql_connect_error());
+}else{
+	echo "ssss";
+}
+
+?>
+
+
+//php index
+
+<?php require_once('server.php');?>
+
+
+<?php
+
+$username='kasun';
+$password='1234';
+
+
+$query = "INSERT INTO user(Name,password) values('{$username}','{$password}')";
+
+$re=mysqli_query($connection,$query);
+
+if($re){
+echo 'recorder';
+}
+
+
+
+<!DOCYPE html>
+<html>
+<header>
+<title>Register</title>
+
+</header>
+<body>
+	<div class="container">
+	
+	<div class="header" >
+	<h1>Register</h1>
+	</div>
+	
+	<form action="index.php" method="post">
+	
+	<label>username</label>
+	<input type="text" name="username">
+	<label>password</label>
+	<input type="password" name="password">
+
+	<button type="submit">Submit</button>
+	</form>
+	
+	</div>
+<div></div>
+</body>
+</html>
+?>
+<?php mysqli_close($connection);?>
+
+
+
+
+//php
+
+<!DOCTYPE HTML>  
+<html>
+<head>
+<style>
+.error {color: #FF0000;}
+</style>
+</head>
+<body>  
+
+<?php
+// define variables and set to empty values
+$nameErr = $emailErr = $genderErr = $websiteErr = "";
+$name = $email = $gender = $comment = $website = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["name"])) {
+    $nameErr = "Name is required";
+  } else {
+    $name = test_input($_POST["name"]);
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
+      $nameErr = "Only letters and white space allowed";
+    }
+  }
+  
+  if (empty($_POST["email"])) {
+    $emailErr = "Email is required";
+  } else {
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "Invalid email format";
+    }
+  }
+    
+  if (empty($_POST["website"])) {
+    $website = "";
+  } else {
+    $website = test_input($_POST["website"]);
+    // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+    if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$website)) {
+      $websiteErr = "Invalid URL";
+    }
+  }
+
+  if (empty($_POST["comment"])) {
+    $comment = "";
+  } else {
+    $comment = test_input($_POST["comment"]);
+  }
+
+  if (empty($_POST["gender"])) {
+    $genderErr = "Gender is required";
+  } else {
+    $gender = test_input($_POST["gender"]);
+  }
+}
+
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+?>
+
+<h2>PHP Form Validation Example</h2>
+<p><span class="error">* required field</span></p>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
+  Name: <input type="text" name="name" value="<?php echo $name;?>">
+  <span class="error">* <?php echo $nameErr;?></span>
+  <br><br>
+  E-mail: <input type="text" name="email" value="<?php echo $email;?>">
+  <span class="error">* <?php echo $emailErr;?></span>
+  <br><br>
+  Website: <input type="text" name="website" value="<?php echo $website;?>">
+  <span class="error"><?php echo $websiteErr;?></span>
+  <br><br>
+  Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment;?></textarea>
+  <br><br>
+  Gender:
+  <input type="radio" name="gender" <?php if (isset($gender) && $gender=="female") echo "checked";?> value="female">Female
+  <input type="radio" name="gender" <?php if (isset($gender) && $gender=="male") echo "checked";?> value="male">Male
+  <input type="radio" name="gender" <?php if (isset($gender) && $gender=="other") echo "checked";?> value="other">Other  
+  <span class="error">* <?php echo $genderErr;?></span>
+  <br><br>
+  <input type="submit" name="submit" value="Submit">  
+</form>
+
+<?php
+echo "<h2>Your Input:</h2>";
+echo $name;
+echo "<br>";
+echo $email;
+echo "<br>";
+echo $website;
+echo "<br>";
+echo $comment;
+echo "<br>";
+echo $gender;
+?>
+
+</body>
+</html>  
